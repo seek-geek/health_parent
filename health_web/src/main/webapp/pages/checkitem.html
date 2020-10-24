@@ -27,7 +27,7 @@
                 <div class="box">
                     <div class="filter-container">
                         <el-input placeholder="项目编码/项目名称" v-model="pagination.queryString" style="width: 200px;" class="filter-item"></el-input>
-                        <el-button @click="findPage()" class="dalfBut">查询</el-button>
+                        <el-button @click="handleCurrentChange(1)" class="dalfBut">查询</el-button>
                         <el-button type="primary" class="butT" @click="handleCreate()">新建</el-button>
                     </div>
                     <el-table size="small" current-row-key="id" :data="dataList" stripe highlight-current-row>
@@ -227,20 +227,38 @@
             created() {
                 // 发送请求，获取所有检查项信息，得到后绑定dataList
                 //jsp pageRequest.request.contextPath
-                axios.get('http://localhost:8080/health_web/checkitem/findAll.do').then(res => {
-                    //res.data => Result {flag,message,data}
-                    if(res.data.flag){
-                        // 成功
-                        this.dataList = res.data.data;
-                    }else{
-                        //this.$message.error('错了哦，这是一条错误消息');
-                        this.$message.error(res.data.message);
-                    }
-                })
+                //axios.get('/checkitem/findAll.do').then(res => {
+                //    //res.data => Result {flag,message,data}
+                //    if(res.data.flag){
+                //        // 成功
+                //        this.dataList = res.data.data;
+                //    }else{
+                //        //this.$message.error('错了哦，这是一条错误消息');
+                //        this.$message.error(res.data.message);
+                //    }
+                //})
+                this.findPage();
             },
             methods: {
                 //编辑
                 handleEdit() {
+                    // 表单校验
+                    this.$refs['dataEditForm'].validate((valid) => {
+                        if (valid) {
+                            axios.post('/checkitem/update.do?',this.formData).then(res => {
+                                this.$message({
+                                    message: res.data.message,
+                                    type: res.data.flag?"success":"error"
+                                });
+                                if(res.data.flag){
+                                    // 成功则要关闭编辑窗口
+                                    this.dialogFormVisible4Edit = false;
+                                    // 刷新列表
+                                    this.findPage();
+                                }
+                            })
+                        }
+                    });
                 },
                 //添加
                 handleAdd () {
@@ -251,7 +269,7 @@
                             //@PathVariable /checkitem/1
                             //@RequestHeader header key=value
                             //@RequestCookie cookie key=value
-                            axios.post('http://localhost:8080/health_web/checkitem/add.do?',this.formData).then(res => {
+                            axios.post('/checkitem/add.do?',this.formData).then(res => {
                                 this.$message({
                                     message: res.data.message,
                                     type: res.data.flag?"success":"error"
@@ -268,6 +286,17 @@
                 },
                 //分页查询
                 findPage() {
+                    axios.post('/checkitem/findPage.do',this.pagination).then(res => {
+                        //res.data=> Result{flag, message, data: PageResult {total,rows}}
+                        if(res.data.flag){
+                            // 成功
+                            // 绑定数据
+                            this.pagination.total = res.data.data.total;
+                            this.dataList = res.data.data.rows;
+                        }else{
+                            this.$message.error(res.data.message);
+                        }
+                    })
                 },
                 // 重置表单
                 resetForm() {
@@ -282,12 +311,49 @@
                 },
                 // 弹出编辑窗口
                 handleUpdate(row) {
+                    // 弹出编辑窗口
+                    this.dialogFormVisible4Edit = true;
+                    //重置表单
+                    this.resetForm();
+                    // 回显数据, 检查项的id
+                    var id=row.id;
+                    // 请求通过id查询
+                    axios.get('/checkitem/findById.do?id=' + id).then(res => {
+                        if(res.data.flag){
+                            // 成功 则绑定回显
+                            this.formData = res.data.data;
+                        }else{
+                            this.$message.error(res.data.message);
+                        }
+                    })
                 },
                 //切换页码
                 handleCurrentChange(currentPage) {
+                    this.pagination.currentPage = currentPage;
+                    this.findPage();
                 },
                 // 删除
                 handleDelete(row) {
+                    //alert(JSON.stringify(row));
+                    var id = row.id;
+                    this.$confirm('此操作将【永久删除】该检查项, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        // 发送请求删除
+                        axios.post('/checkitem/deleteById.do?id=' + id).then(res => {
+                            this.$message({
+                                message: res.data.message,
+                                type: res.data.flag?"success":"error"
+                            })
+                            if(res.data.flag){
+                                this.findPage();
+                            }
+                        })
+                    }).catch(() => {
+
+                    });
                 }
             }
         })
