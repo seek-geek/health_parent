@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.health.dao.SetMealDao">
+    <insert id="add" parameterType="com.itheima.health.pojo.Setmeal" keyProperty="id" useGeneratedKeys="true">
+        insert into t_setmeal (name,code,helpCode,sex,age,price,remark,attention,img)
+        values (#{name},#{code},#{helpCode},#{sex},#{age},#{price},#{remark},#{attention},#{img})
+    </insert>
+    <insert id="addSetmealCheckGroup" parameterType="int">
+        insert into t_setmeal_checkgroup(setmeal_id,checkgroup_id)
+        values (#{setmealId},#{checkgroupId})
+    </insert>
+
+    <select id="findByCondition" parameterType="String" resultType="com.itheima.health.pojo.Setmeal">
+        select * from t_setmeal
+        <if test="value != null and value.lenght > 0">
+            where code like #{queryString} or name like #{queryString} or helpCode like #{queryString}
+        </if>
+    </select>
+</mapper>

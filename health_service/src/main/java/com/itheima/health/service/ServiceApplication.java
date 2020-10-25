@@ -1,5 +1,6 @@
 package com.itheima.health.service;
 
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.IOException;
