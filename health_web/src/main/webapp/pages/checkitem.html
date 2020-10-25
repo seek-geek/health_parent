@@ -227,16 +227,16 @@
             created() {
                 // 发送请求，获取所有检查项信息，得到后绑定dataList
                 //jsp pageRequest.request.contextPath
-                //axios.get('/checkitem/findAll.do').then(res => {
-                //    //res.data => Result {flag,message,data}
-                //    if(res.data.flag){
-                //        // 成功
-                //        this.dataList = res.data.data;
-                //    }else{
-                //        //this.$message.error('错了哦，这是一条错误消息');
-                //        this.$message.error(res.data.message);
-                //    }
-                //})
+                axios.get('/checkitem/findAll.do').then(res => {
+                   //res.data => Result {flag,message,data}
+                   if(res.data.flag){
+                       // 成功
+                       this.dataList = res.data.data;
+                   }else{
+                       //this.$message.error('错了哦，这是一条错误消息');
+                       this.$message.error(res.data.message);
+                   }
+                })
                 this.findPage();
             },
             methods: {
