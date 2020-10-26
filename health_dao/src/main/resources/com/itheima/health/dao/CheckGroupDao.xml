@@ -31,7 +31,7 @@
         select checkitem_id from t_checkgroup_checkitem where checkgroup_id=#{id}
     </select>
 
-    <update id="update" parameterType="com.itheima.health.pojo.CheckGroup" >
+    <update id="update" parameterType="checkGroup" >
         update t_checkgroup
         set
             code=#{code},

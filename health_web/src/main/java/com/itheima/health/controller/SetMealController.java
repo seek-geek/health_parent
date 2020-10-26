@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/checkitem")
+@RequestMapping("/setmeal")
 public class SetMealController {
     private static final Logger log = LoggerFactory.getLogger(SetMealController.class);
 
