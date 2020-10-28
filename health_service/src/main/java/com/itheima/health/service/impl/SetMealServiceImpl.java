@@ -1,4 +1,4 @@
-package com.itheima.health.service;
+package com.itheima.health.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.Page;
@@ -8,6 +8,7 @@ import com.itheima.health.entity.PageResult;
 import com.itheima.health.entity.QueryPageBean;
 import com.itheima.health.exception.MyException;
 import com.itheima.health.pojo.Setmeal;
+import com.itheima.health.service.SetMealService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 

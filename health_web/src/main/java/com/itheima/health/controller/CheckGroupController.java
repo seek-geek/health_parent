@@ -52,4 +52,10 @@ public class CheckGroupController {
         checkGroupService.deleteById(id);
         return new Result(true, MessageConstant.DELETE_CHECKGROUP_SUCCESS);
     }
+
+    @PostMapping("/findAll")
+    public Result findAll(){
+        List<CheckGroup> all = checkGroupService.findAll();
+        return new Result(true,MessageConstant.QUERY_CHECKGROUP_SUCCESS,all);
+    }
 }

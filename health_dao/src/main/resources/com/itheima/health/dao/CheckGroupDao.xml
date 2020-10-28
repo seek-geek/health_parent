@@ -50,4 +50,8 @@
     <delete id="deleteCheckGroupCheckItem" parameterType="int">
         delete from t_checkgroup_checkitem where checkgroup_id=#{id}
     </delete>
+
+    <select id="findAll" resultType="com.itheima.health.pojo.CheckGroup">
+        select * from t_checkgroup
+    </select>
 </mapper>
