@@ -19,4 +19,8 @@ public interface SetMealService {
     void update(Setmeal setmeal, Integer[] checkgroupIds);
 
     void deleteById(int id) throws MyException;
+
+    List<Setmeal> findSetmealList();
+
+    Setmeal findDetailsByid(int id);
 }

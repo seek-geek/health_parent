@@ -60,4 +60,14 @@ public class SetMealServiceImpl implements SetMealService {
     public void deleteById(int id) throws MyException {
 
     }
+
+    @Override
+    public List<Setmeal> findSetmealList() {
+        return setMealDao.findSetmealList();
+    }
+
+    @Override
+    public Setmeal findDetailsByid(int id) {
+        return setMealDao.findDetailsByid(id);
+    }
 }
