@@ -44,7 +44,7 @@ public class SetMealServiceImpl implements SetMealService {
 
     @Override
     public Setmeal findById(int id) {
-        return null;
+        return setMealDao.findById(id);
     }
 
     @Override
