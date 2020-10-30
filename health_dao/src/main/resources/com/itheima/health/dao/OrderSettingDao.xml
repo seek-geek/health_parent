@@ -20,4 +20,12 @@
         select CAST(DATE_FORMAT(orderDate,'%d') AS SIGNED) date,number,reservations
         from t_ordersetting where orderdate like #{month}
     </select>
+
+    <select id="findByOrderDate" parameterType="date" resultType="ordersetting">
+        select * from t_ordersetting where orderDate=#{orderDate}
+    </select>
+
+    <update id="editReservationsByOrderDate" parameterType="OrderSetting">
+        update t_ordersetting set reservations = reservations+1 where orderDate = #{orderDate} and number>reservations
+    </update>
 </mapper>
