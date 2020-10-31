@@ -1,5 +1,6 @@
 package com.itheima.health.controller;
 
+import com.aliyuncs.exceptions.ClientException;
 import com.itheima.health.Utils.SMSUtils;
 import com.itheima.health.Utils.ValidateCodeUtils;
 import com.itheima.health.constant.MessageConstant;
@@ -31,7 +32,11 @@ public class ValidateCodeController {
         String phoneCode = jedis.get(key);
         if (StringUtils.isEmpty(phoneCode)) {
             phoneCode = String.valueOf(ValidateCodeUtils.generateValidateCode(6));
-            SMSUtils.sendShortMessage(SMSUtils.VALIDATE_CODE, phoneNumber, phoneCode);
+            try {
+                SMSUtils.sendShortMessage(SMSUtils.VALIDATE_CODE, phoneNumber, phoneCode);
+            } catch (Exception e) {
+                log.error("发送验证码出错", e);
+            }
             jedis.setex(key, 60 * 5, phoneCode);
             return new Result(true, MessageConstant.SEND_VALIDATECODE_SUCCESS);
         } else {
@@ -46,7 +51,11 @@ public class ValidateCodeController {
         String phoneCode = jedis.get(key);
         if (StringUtils.isEmpty(phoneCode)) {
             phoneCode = String.valueOf(ValidateCodeUtils.generateValidateCode(6));
-            SMSUtils.sendShortMessage(SMSUtils.VALIDATE_CODE, phoneNumber, phoneCode);
+            try {
+                SMSUtils.sendShortMessage(SMSUtils.VALIDATE_CODE, phoneNumber, phoneCode);
+            } catch (ClientException e) {
+                log.error("发送验证码出错", e);
+            }
             jedis.setex(key, 60 * 10, phoneCode);
             return new Result(true, MessageConstant.SEND_VALIDATECODE_SUCCESS);
         } else {

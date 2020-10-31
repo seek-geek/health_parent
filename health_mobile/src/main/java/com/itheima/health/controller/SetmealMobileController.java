@@ -1,11 +1,11 @@
 package com.itheima.health.controller;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.itheima.health.Utils.QiNiuUtils;
 import com.itheima.health.constant.MessageConstant;
 import com.itheima.health.entity.Result;
 import com.itheima.health.pojo.Setmeal;
 import com.itheima.health.service.SetMealService;
-import jdk.nashorn.internal.ir.annotations.Reference;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +27,7 @@ public class SetmealMobileController {
         return new Result(true, MessageConstant.QUERY_SETMEAL_SUCCESS, setmeals);
     }
 
-    @PostMapping("/findDetailsByid")
+    @PostMapping("/findDetailById")
     public Result findDetailsByid(int id) {
         Setmeal setmeal = setMealService.findDetailsByid(id);
         setmeal.setImg(QiNiuUtils.DOMAIN + setmeal.getImg());

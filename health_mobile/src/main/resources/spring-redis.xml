@@ -16,9 +16,9 @@
     </bean>
 
     <bean id="jedisPool" class="redis.clients.jedis.JedisPool">
-        <constructor-arg name="poolConfig" value="jedisPoolConfig"/>
+        <constructor-arg name="poolConfig" ref="jedisPoolConfig"/>
         <constructor-arg name="host" value="${redis.host}"/>
         <constructor-arg name="port" value="${redis.port}" type="int"/>
         <constructor-arg name="timeout" value="${redis.timeout}" type="int"/>
-     </bean>
+    </bean>
 </beans>
