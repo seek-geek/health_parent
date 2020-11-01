@@ -6,6 +6,9 @@ import com.itheima.health.pojo.Member;
 import com.itheima.health.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service(interfaceClass = MemberService.class)
 public class MemberServiceImpl implements MemberService {
 
@@ -20,5 +23,14 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void add(Member member) {
         memberDao.add(member);
+    }
+
+    @Override
+    public List<Integer> getMemberReport(List<String> months) {
+        List<Integer> memberCounts = new ArrayList<>(12);
+        months.forEach(month -> {
+            memberCounts.add(memberDao.findMemberCountBeforeDate(month));
+        });
+        return memberCounts;
     }
 }
