@@ -43,5 +43,7 @@ public interface OrderDao {
      * 获取热门套餐
      * @return
      */
-    List<Map> findHotSetmeal();
+    List<Map<String,Object>> findHotSetmeal();
+
+    Integer findOrderCountBetweenDate(String monday, String sunday);
 }
