@@ -22,14 +22,15 @@ public class SetMealServiceImpl implements SetMealService {
     private SetMealDao setMealDao;
 
     @Override
-    public void add(Setmeal setmeal, Integer[] checkgroupIds) {
-        setMealDao.add(setmeal);
+    public int add(Setmeal setmeal, Integer[] checkgroupIds) {
+       int result = setMealDao.add(setmeal);
         Integer isetmealId= setmeal.getId();
         if (checkgroupIds != null){
             for (Integer checkgroupId : checkgroupIds){
                 setMealDao.addSetmealCheckGroup(isetmealId,checkgroupId);
             }
         }
+        return result;
     }
 
     @Override
@@ -43,24 +44,51 @@ public class SetMealServiceImpl implements SetMealService {
         return pageResult;
     }
 
+    /**
+     * 通过id查询套餐信息
+     * @param id
+     * @return
+     */
     @Override
     public Setmeal findById(int id) {
         return setMealDao.findById(id);
     }
 
+    /**
+     * 查询属于这个套餐的选中的检查组id
+     */
     @Override
     public List<Integer> findCheckgroupIdsBySetmealId(int id) {
-        return null;
+        return setMealDao.findCheckgroupIdsBySetmealId(id);
     }
 
     @Override
     public void update(Setmeal setmeal, Integer[] checkgroupIds) {
-
+        // 更新套餐
+        setMealDao.update(setmeal);
+        // 删除旧关系
+        setMealDao.deleteSetmealCheckGroup(setmeal.getId());
+        // 添加新关系
+        if(null != checkgroupIds){
+            for (Integer checkgroupId : checkgroupIds) {
+                setMealDao.addSetmealCheckGroup(setmeal.getId(), checkgroupId);
+            }
+        }
     }
 
     @Override
     public void deleteById(int id) throws MyException {
-
+        // 判断是否被订单使用
+        int count = setMealDao.findOrderCountBySetmealId(id);
+        // 使用则报错
+        if(count > 0){
+            throw new MyException("该套餐已经被订单使用了，不能删除");
+        }
+        // 没使用
+        // 先删除套餐与检查组的关系
+        setMealDao.deleteSetmealCheckGroup(id);
+        // 再删除套餐
+        setMealDao.deleteById(id);
     }
 
     @Override
@@ -75,6 +103,6 @@ public class SetMealServiceImpl implements SetMealService {
 
     @Override
     public List<Map<String, Object>> getSetmealReport() {
-        return null;
+        return setMealDao.getSetmealReport();
     }
 }

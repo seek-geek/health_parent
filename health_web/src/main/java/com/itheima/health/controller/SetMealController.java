@@ -10,14 +10,15 @@ import com.itheima.health.pojo.Setmeal;
 import com.itheima.health.service.SetMealService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,9 +26,10 @@ import java.util.UUID;
 @RequestMapping("/setmeal")
 public class SetMealController {
     private static final Logger log = LoggerFactory.getLogger(SetMealController.class);
-
     @Reference
     private SetMealService setMealService;
+    @Autowired
+    private JedisPool jedisPool;
 
     @PostMapping("/upload")
     public Result upload(MultipartFile imgFile){
@@ -48,7 +50,11 @@ public class SetMealController {
 
     @PostMapping("/add")
     public Result add(Setmeal setmeal,Integer[] checkGroupIds){
-        setMealService.add(setmeal,checkGroupIds);
+        Integer setmealId =setMealService.add(setmeal,checkGroupIds);
+        Jedis jedis = jedisPool.getResource();
+        String key = "setmeal:static:html";
+        jedis.sadd(key,setmealId+"|1|" + System.currentTimeMillis());
+        jedis.close();
         return new Result(true,MessageConstant.ADD_SETMEAL_SUCCESS);
     }
 
@@ -58,4 +64,61 @@ public class SetMealController {
         return new Result(true, MessageConstant.QUERY_SETMEAL_SUCCESS,pageDta);
     }
 
+
+    @GetMapping("/findById")
+    public Result findById(int id){
+        Setmeal setmeal = setMealService.findById(id);
+        /**
+         * {
+         *     flag:
+         *     message:
+         *     data:{
+         *          setmeal: setmeal,
+         *          domain: QiNiuUtils.DOMAIN
+         *     }
+         * }
+         */
+        Map<String,Object> resultMap = new HashMap<String,Object>(2);
+        resultMap.put("setmeal",setmeal);
+        resultMap.put("domain",QiNiuUtils.DOMAIN);
+        return new Result(true, MessageConstant.QUERY_SETMEAL_SUCCESS,resultMap);
+    }
+
+    /**
+     * 查询属于这个套餐的选中的检查组id
+     */
+    @GetMapping("/findCheckgroupIdsBySetmealId")
+    public Result findCheckgroupIdsBySetmealId(int id){
+        // 后端list => 前端 [], javaBean 或 map => json{}
+        // 查询属于这个套餐的选中的检查组id
+        List<Integer> list = setMealService.findCheckgroupIdsBySetmealId(id);
+        return new Result(true, MessageConstant.QUERY_SETMEAL_SUCCESS,list);
+    }
+    /**
+     * 编辑套餐的提交
+     */
+    @PostMapping("/update")
+    public Result update(@RequestBody Setmeal setmeal, Integer[] checkgroupIds){
+        // 调用服务更新
+        setMealService.update(setmeal,checkgroupIds);
+        Jedis jedis = jedisPool.getResource();
+        String key = "setmeal:static:html";
+        jedis.sadd(key,setmeal.getId()+"|1|" + System.currentTimeMillis());
+        jedis.close();
+        return new Result(true, "更新套餐成功");
+    }
+
+    /**
+     * 删除套餐
+     */
+    @PostMapping("/deleteById")
+    public Result deleteById(int id){
+        // 调用服务删除
+        setMealService.deleteById(id);
+        Jedis jedis = jedisPool.getResource();
+        String key = "setmeal:static:html";
+        jedis.sadd(key,id+"|0|" + System.currentTimeMillis());
+        jedis.close();
+        return new Result(true, "删除套餐成功！");
+    }
 }

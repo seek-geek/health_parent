@@ -5,9 +5,10 @@ import com.itheima.health.pojo.Setmeal;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SetMealDao {
-    void add(Setmeal setmeal);
+    int add(Setmeal setmeal);
 
     void addSetmealCheckGroup(@Param("setmealId") Integer setmealId, @Param("checkgroupId") Integer checkgroupId);
 
@@ -28,4 +29,6 @@ public interface SetMealDao {
     List<Setmeal> findSetmealList();
 
     Setmeal findDetailsByid(int id);
+
+    List<Map<String, Object>> getSetmealReport();
 }

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface SetMealService {
-    void add(Setmeal setmeal, Integer[] checkgroupIds);
+    int add(Setmeal setmeal, Integer[] checkgroupIds);
 
     PageResult<Setmeal> findPage(QueryPageBean queryPageBean);
 
