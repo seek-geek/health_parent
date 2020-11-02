@@ -81,9 +81,4 @@
           group by o.setmeal_id
           order by setmeal_count desc limit 0,4
     </select>
-
-    <!--根据日期统计到诊数，统计指定日期之后的到诊数-->
-    <select id="findVisitsCountAfterDate" parameterType="string" resultType="int">
-        select count(id) from t_order where orderDate &gt;= #{value} and orderStatus = '已到诊'
-    </select>
 </mapper>

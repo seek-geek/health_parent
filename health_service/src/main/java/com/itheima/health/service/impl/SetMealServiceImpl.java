@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Map;
 
 @Service(interfaceClass = SetMealService.class)
 public class SetMealServiceImpl implements SetMealService {
@@ -70,5 +71,10 @@ public class SetMealServiceImpl implements SetMealService {
     @Override
     public Setmeal findDetailsByid(int id) {
         return setMealDao.findDetailsByid(id);
+    }
+
+    @Override
+    public List<Map<String, Object>> getSetmealReport() {
+        return null;
     }
 }
